@@ -7,9 +7,8 @@ namespace Play.Catalog.Service.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ItemsController : ControllerBase
+public class ItemsController(IItemsRepository itemsRepository) : ControllerBase
 {
-    ItemsRepository itemsRepository = new ItemsRepository();
 
     [HttpGet]
     public async Task<IEnumerable<ItemDto>> GetAsync()
