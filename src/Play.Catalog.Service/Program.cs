@@ -2,6 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Play.Catalog.Service.Entities;
 using Play.Catalog.Service.Repositories;
 using Play.Catalog.Service.Settings;
 using Scalar.AspNetCore;
@@ -25,7 +26,11 @@ builder.Services.AddSingleton<IMongoDatabase>(sp =>
 });
 
 
-builder.Services.AddSingleton<IItemsRepository, ItemsRepository>();
+builder.Services.AddSingleton<IRepository<Item>>(sp=>
+{
+    IMongoDatabase database = sp.GetRequiredService<IMongoDatabase>();
+    return new MongoRepository<Item>(database, "items");
+});
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

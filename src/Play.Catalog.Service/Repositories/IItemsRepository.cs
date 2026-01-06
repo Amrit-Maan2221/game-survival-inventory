@@ -2,11 +2,11 @@ using Play.Catalog.Service.Entities;
 
 namespace Play.Catalog.Service.Repositories;
 
-public interface IItemsRepository
+public interface IRepository<T> where T : IEntity
 {
-    Task CreateItemAsync(Item item);
+    Task CreateItemAsync(T item);
     Task DeleteItemAsync(Guid id);
-    Task<Item> GetItemAsync(Guid id);
-    Task<IReadOnlyCollection<Item>> GetItemsAsync();
-    Task UpdateItemAsync(Item item);
+    Task<T> GetItemAsync(Guid id);
+    Task<IReadOnlyCollection<T>> GetItemsAsync();
+    Task UpdateItemAsync(T item);
 }
