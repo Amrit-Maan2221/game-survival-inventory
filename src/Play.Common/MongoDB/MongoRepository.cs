@@ -1,7 +1,7 @@
 using MongoDB.Driver;
-using Play.Catalog.Service.Entities;
+using System.Linq.Expressions;
 
-namespace Play.Catalog.Service.Repositories;
+namespace Play.Common.MongoDB;
 
 public class MongoRepository<T> : IRepository<T> where T : IEntity
 {
@@ -12,18 +12,28 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         collection = database.GetCollection<T>(collectionName);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetItemsAsync()
+    public async Task<IReadOnlyCollection<T>> GetAllAsync()
     {
         return await collection.Find(filterBuilder.Empty).ToListAsync();
     }
 
-    public async Task<T> GetItemAsync(Guid id)
+    public async Task<T> GetAsync(Guid id)
     {
         FilterDefinition<T> filter = filterBuilder.Eq(item => item.Id, id);
         return await collection.Find(filter).SingleOrDefaultAsync();
     }
 
-    public async Task CreateItemAsync(T item)
+    public async Task<T> GetAsync(Expression<Func<T, bool>> filter)
+    {
+        return await collection.Find(filter).SingleOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter)
+    {
+        return await collection.Find(filter).ToListAsync();
+    }
+
+    public async Task CreateAsync(T item)
     {
         if (item is null)
         {
@@ -32,7 +42,7 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         await collection.InsertOneAsync(item);
     }
 
-    public async Task UpdateItemAsync(T item)
+    public async Task UpdateAsync(T item)
     {
         if (item is null)
         {
@@ -43,7 +53,7 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         await collection.ReplaceOneAsync(filter, item);
     }
 
-    public async Task DeleteItemAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         FilterDefinition<T> filter = filterBuilder.Eq(item => item.Id, id);
         await collection.DeleteOneAsync(filter);

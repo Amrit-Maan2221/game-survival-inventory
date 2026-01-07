@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Entities;
 using Play.Catalog.Service.Repositories;
+using Play.Common;
 
 namespace Play.Catalog.Service.Controllers;
 
@@ -13,14 +14,14 @@ public class ItemsController(IRepository<Item> itemsRepository) : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<ItemDto>> GetAsync()
     {
-        IEnumerable<ItemDto> items = (await itemsRepository.GetItemsAsync()).Select(item => item.AsDto());
+        IEnumerable<ItemDto> items = (await itemsRepository.GetAllAsync()).Select(item => item.AsDto());
         return items;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ItemDto>> GetAsync(Guid id)
     {
-        ItemDto itemDto = (await itemsRepository.GetItemAsync(id))?.AsDto();
+        ItemDto itemDto = (await itemsRepository.GetAsync(id))?.AsDto();
         if(itemDto is null)
         {
             return NotFound();
@@ -41,14 +42,14 @@ public class ItemsController(IRepository<Item> itemsRepository) : ControllerBase
             CreatedDate = DateTimeOffset.UtcNow
         };
 
-        await itemsRepository.CreateItemAsync(item);
+        await itemsRepository.CreateAsync(item);
         return CreatedAtAction(nameof(GetAsync), new { id = item.Id }, item.AsDto());
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult> PutAsync(Guid id, UpdateItemDto updateItemDto)
     {
-        Item existingItem = await itemsRepository.GetItemAsync(id);
+        Item existingItem = await itemsRepository.GetAsync(id);
         if (existingItem is null)
         {
             return NotFound();
@@ -58,7 +59,7 @@ public class ItemsController(IRepository<Item> itemsRepository) : ControllerBase
         existingItem.Name = updateItemDto.Name;
         existingItem.Description = updateItemDto.Description;
         existingItem.Price = updateItemDto.Price;
-        await itemsRepository.UpdateItemAsync(existingItem);
+        await itemsRepository.UpdateAsync(existingItem);
 
         return NoContent();
     }
@@ -67,13 +68,13 @@ public class ItemsController(IRepository<Item> itemsRepository) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
-        Item existingItem = await itemsRepository.GetItemAsync(id);
+        Item existingItem = await itemsRepository.GetAsync(id);
         if (existingItem is null)
         {
             return NotFound();
         }
 
-        await itemsRepository.DeleteItemAsync(existingItem.Id);
+        await itemsRepository.DeleteAsync(existingItem.Id);
 
         return NoContent();
     }
