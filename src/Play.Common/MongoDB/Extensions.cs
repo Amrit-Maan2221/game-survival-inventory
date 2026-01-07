@@ -11,6 +11,7 @@ public static class Extensions
 {
     public static IServiceCollection AddMongo(this IServiceCollection services)
     {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
         BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
         services.AddSingleton<IMongoDatabase>(sp =>
         {

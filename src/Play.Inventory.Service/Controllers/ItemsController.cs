@@ -27,7 +27,7 @@ public class ItemsController(IRepository<InventoryItem> itemsRepository, Catalog
             return item.AsDto(catalogItem.Name, catalogItem.Description);
         });
 
-        return Ok(items);
+        return Ok(itemsDtos);
     }
 
     [HttpPost]
