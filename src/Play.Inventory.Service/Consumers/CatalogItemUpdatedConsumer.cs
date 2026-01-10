@@ -1,0 +1,30 @@
+using MassTransit;
+using Play.Catalog.Contracts;
+using Play.Common;
+using Play.Inventory.Service.Entities;
+
+namespace Play.Inventory.Service.Consumers;
+
+public class CatalogItemUpdatedConsumer(IRepository<CatalogItem> repository) : IConsumer<CatalogItemUpdated>
+{
+    public async Task Consume(ConsumeContext<CatalogItemUpdated> context)
+    {
+        CatalogItemUpdated message = context.Message;
+        CatalogItem? item = await repository.GetAsync(message.Id);
+        if (item is null)
+        {
+            await repository.CreateAsync(new CatalogItem
+            {
+                Id = message.Id,
+                Name = message.Name,
+                Description = message.Description
+            });
+        }
+        else
+        {
+            item.Name = message.Name;
+            item.Description = message.Description;
+            await repository.UpdateAsync(item);
+        }
+    }
+}

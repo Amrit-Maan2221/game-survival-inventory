@@ -25,6 +25,7 @@ public static class Extensions
                 });
 
                 cfg.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(serviceSettings.ServiceName, false));
+                cfg.UseMessageRetry(retryConfiguratory => retryConfiguratory.Interval(3, TimeSpan.FromSeconds(5)));
             });
         });
 

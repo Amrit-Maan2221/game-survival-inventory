@@ -1,3 +1,4 @@
+using Play.Common.MassTransit;
 using Play.Common.MongoDB;
 using Play.Common.Settings;
 using Play.Inventory.Service.Clients;
@@ -13,7 +14,9 @@ builder.Services.AddControllers(options =>
     options.SuppressAsyncSuffixInActionNames = false;
 });
 
-builder.Services.AddMongo().AddMongoRepository<InventoryItem>("items");
+builder.Services.AddMongo().AddMongoRepository<InventoryItem>("inventoryitems")
+.AddMongoRepository<CatalogItem>("catalogitems").AddMassTransitWithRabbitMq();
+
 Random jitter = new();
 builder.Services.AddHttpClient<CatalogClient>((client) =>
 {

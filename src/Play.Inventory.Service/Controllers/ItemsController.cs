@@ -8,7 +8,7 @@ namespace Play.Inventory.Service.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ItemsController(IRepository<InventoryItem> itemsRepository, CatalogClient catalogClient) : ControllerBase
+public class ItemsController(IRepository<InventoryItem> itemsRepository, IRepository<CatalogItem> catalogItemsRepository) : ControllerBase
 {
 
     [HttpGet]
@@ -18,10 +18,10 @@ public class ItemsController(IRepository<InventoryItem> itemsRepository, Catalog
         {
             return BadRequest();
         }
-        IReadOnlyCollection<CatalogItemDto> catalogItems = await catalogClient.GetCatalogItemsAsync();
         IReadOnlyCollection<InventoryItem> items = await itemsRepository.GetAllAsync(item => item.UserId == userId);
+        var catalogItems = await catalogItemsRepository.GetAllAsync();
 
-        var itemsDtos = items.Select(item =>
+        var itemsDtos = items.Select(async item =>
         {
             var catalogItem = catalogItems.First(catalogItem => catalogItem.Id == item.CatalogItemId);
             return item.AsDto(catalogItem.Name, catalogItem.Description);
