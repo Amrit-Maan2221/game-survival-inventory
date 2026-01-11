@@ -8,6 +8,13 @@ using Polly.Timeout;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var isRender = builder.Configuration["IS_RENDER"] == "true";
+if (isRender)
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
+
 builder.Services.AddOpenApi();
 builder.Services.AddControllers(options =>
 {
@@ -30,6 +37,7 @@ builder.Services.AddHttpClient<CatalogClient>((client) =>
     ).AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(1)));
 
 var app = builder.Build();
+app.UseForwardedHeaders();
 
 bool enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
 if (enableSwagger)
