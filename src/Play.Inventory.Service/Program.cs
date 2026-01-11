@@ -28,8 +28,8 @@ Random jitter = new();
 builder.Services.AddHttpClient<CatalogClient>((client) =>
 {
     var catalogServiceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
-    client.BaseAddress = new Uri("https://localhost:7009");
-}).AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync
+    client.BaseAddress = new Uri(builder.Configuration["CATALOG_SERVICE_URL"]  ?? "https://localhost:7009");
+    }).AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync
         (3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt) + (jitter.Next(0, 1000) / 1000.0)))
         )
         .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().CircuitBreakerAsync
