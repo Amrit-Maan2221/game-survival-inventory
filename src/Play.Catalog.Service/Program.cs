@@ -16,9 +16,6 @@ ServiceSettings serviceSettings = builder.Configuration.GetSection(nameof(Servic
 
 builder.Services.AddMongo().AddMongoRepository<Item>("items");
 builder.Services.AddMassTransitWithRabbitMq();
-
-
-var app = builder.Build();
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders =
@@ -28,6 +25,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
+
+var app = builder.Build();
+app.UseForwardedHeaders();
 
 var enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
 if (enableSwagger)
