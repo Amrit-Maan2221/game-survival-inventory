@@ -8,7 +8,7 @@ namespace Play.Inventory.Service.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ItemsController(IRepository<InventoryItem> itemsRepository, IRepository<CatalogItem> catalogItemsRepository) : ControllerBase
+public class InventoryItemsController(IRepository<InventoryItem> itemsRepository, IRepository<CatalogItem> catalogItemsRepository) : ControllerBase
 {
 
     [HttpGet]

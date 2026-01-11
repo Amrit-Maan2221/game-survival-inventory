@@ -9,7 +9,7 @@ namespace Play.Catalog.Service.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ItemsController(IRepository<Item> itemsRepository, IPublishEndpoint publishEndpoint) : ControllerBase
+public class CatalogItemsController(IRepository<Item> itemsRepository, IPublishEndpoint publishEndpoint) : ControllerBase
 {
     
     [HttpGet]
