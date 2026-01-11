@@ -8,7 +8,7 @@ using Polly.Timeout;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var port = Environment.GetEnvironmentVariable("PORT") ?? "1000";
+var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port))
 {
     // Log the port being used
