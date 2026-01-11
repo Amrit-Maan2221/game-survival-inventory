@@ -6,12 +6,14 @@ using Scalar.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
-var isRender = builder.Configuration["IS_RENDER"] == "true";
-if (isRender)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "1000";
+if (!string.IsNullOrEmpty(port))
 {
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "1000";
+    // Log the port being used
+    Console.WriteLine($"Using Environment port: {port}");
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
+   
 
 
 builder.Services.AddOpenApi();
