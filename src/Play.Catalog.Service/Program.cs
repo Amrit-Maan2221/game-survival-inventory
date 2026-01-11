@@ -27,4 +27,11 @@ if (enableSwagger)
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+
+app.MapGet("/", () => $"This is the Play.Catalog Service.");
+// map the health check endpoint with ok status and timestamp
+app.MapGet("/health", () => Results.Ok(new { status = "Ok", timestamp = DateTimeOffset.UtcNow }));
+
+
 app.Run();
