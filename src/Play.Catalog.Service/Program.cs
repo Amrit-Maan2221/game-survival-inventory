@@ -3,6 +3,7 @@ using Play.Common.MongoDB;
 using Play.Common.MassTransit;
 using Play.Common.Settings;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
@@ -18,6 +19,16 @@ builder.Services.AddMassTransitWithRabbitMq();
 
 
 var app = builder.Build();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
 if (enableSwagger)
 {
@@ -25,7 +36,6 @@ if (enableSwagger)
     app.MapScalarApiReference("/docs");
 }
 
-app.UseHttpsRedirection();
 app.MapControllers();
 
 
