@@ -1,4 +1,3 @@
-using MassTransit;
 using Play.Catalog.Service.Entities;
 using Play.Common.MongoDB;
 using Play.Common.MassTransit;
@@ -19,10 +18,11 @@ builder.Services.AddMassTransitWithRabbitMq();
 
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
+var enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
+if (enableSwagger)
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("/docs");
 }
 
 app.UseHttpsRedirection();

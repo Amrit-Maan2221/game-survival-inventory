@@ -31,11 +31,11 @@ builder.Services.AddHttpClient<CatalogClient>((client) =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+bool enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
+if (enableSwagger)
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("/docs");
 }
 
 app.UseHttpsRedirection();
