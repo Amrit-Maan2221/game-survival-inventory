@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 var isRender = builder.Configuration["IS_RENDER"] == "true";
 if (isRender)
 {
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "1000";
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
 
@@ -34,10 +34,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 app.UseForwardedHeaders();
 
-var enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
+bool enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
 if (enableSwagger)
 {
     app.MapOpenApi();
@@ -46,10 +46,28 @@ if (enableSwagger)
 
 app.MapControllers();
 
-
-app.MapGet("/", () => $"This is the Play.Catalog Service.");
+app.MapGet("/", () => $"This is the Play.Inventory Service.");
 // map the health check endpoint with ok status and timestamp
 app.MapGet("/health", () => Results.Ok(new { status = "Ok", timestamp = DateTimeOffset.UtcNow }));
+Console.WriteLine("App is about to Run...");
+IHostApplicationLifetime lifetime = app.Lifetime;
 
+lifetime.ApplicationStarted.Register(() =>
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("ApplicationStarted triggered");
+});
+
+lifetime.ApplicationStopping.Register(() =>
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogWarning("ApplicationStopping triggered");
+});
+
+lifetime.ApplicationStopped.Register(() =>
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogWarning("ApplicationStopped triggered");
+});
 
 app.Run();
