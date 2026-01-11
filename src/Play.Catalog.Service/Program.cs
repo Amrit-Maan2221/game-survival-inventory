@@ -49,7 +49,7 @@ if (enableSwagger)
 
 app.MapControllers();
 
-app.MapGet("/", () => $"This is the Play.Inventory Service.");
+app.MapGet("/", () => $"This is the Play.Catalog Service.");
 // map the health check endpoint with ok status and timestamp
 app.MapGet("/health", () => Results.Ok(new { status = "Ok", timestamp = DateTimeOffset.UtcNow }));
 Console.WriteLine("App is about to Run...");
