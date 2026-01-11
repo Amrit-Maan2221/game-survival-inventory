@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import AppLayout from "./layouts/AppLayout";
+import AppLayout from "./layouts/AppLayout.jsx";
 import { lazy, Suspense } from "react";
-import PageLoader from "./pages/PageLoader";
+import PageLoader from "./pages/PageLoader.jsx";
 const Home = lazy(() => import("./pages/Home"));
 const Catalog = lazy(() => import("./pages/Catalog"));
 const CatalogItem = lazy(() => import("./pages/CatalogItem"));
