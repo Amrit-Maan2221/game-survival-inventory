@@ -25,8 +25,8 @@ services:
     ports:
       - "5001:8080"
     environment:
-      - MongoDb__ConnectionString=mongodb://mongodb:27017
-      - RabbitMq__ConnectionString=amqp://guest:guest@rabbitmq:5672
+      - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
+      - RabbitMqSettings__ConnectionString=amqp://guest:guest@rabbitmq:5672
       - ENABLE_SWAGGER=true
     depends_on:
       - mongodb
@@ -39,8 +39,8 @@ services:
     ports:
       - "5002:8080"
     environment:
-      - MongoDb__ConnectionString=mongodb://mongodb:27017
-      - RabbitMq__ConnectionString=amqp://guest:guest@rabbitmq:5672
+      - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
+      - RabbitMqSettings__ConnectionString=amqp://guest:guest@rabbitmq:5672
       - ENABLE_SWAGGER=true
     depends_on:
       - mongodb
