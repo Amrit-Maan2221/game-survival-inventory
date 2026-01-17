@@ -15,7 +15,20 @@ if (!string.IsNullOrEmpty(port))
     Console.WriteLine($"Using Environment port: {port}");
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(allowedOrigins!)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddOpenApi();
 builder.Services.AddControllers(options =>
 {

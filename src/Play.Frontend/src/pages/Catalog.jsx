@@ -1,35 +1,56 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getCatalogItems } from "../api/catalogApi";
 
 function Catalog() {
-  const items = [1, 2, 3, 4];
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const sort = searchParams.get("sort") || "asc";
+  useEffect(() => {
+    let isMounted = true;
 
-  const sortedItems =
-    sort === "asc" ? items : [...items].reverse();
+    getCatalogItems()
+      .then(data => {
+        if (isMounted) {
+          setItems(data);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (loading) return <p>Loading catalog...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div>
-      <h2>Catalog</h2>
+      <h1>Catalog</h1>
 
-      <button onClick={() => setSearchParams({ sort: "asc" })}>
-        Sort Asc
-      </button>
-
-      <button onClick={() => setSearchParams({ sort: "desc" })}>
-        Sort Desc
-      </button>
-
-      <ul>
-        {sortedItems.map((id) => (
-          <li key={id}>
-            <Link to={`/catalog/${id}`}>
-              View Item {id}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {items.length === 0 ? (
+        <p>No items found.</p>
+      ) : (
+        <ul>
+          {items.map(item => (
+            <li key={item.id} style={{ marginBottom: "1rem" }}>
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              <strong>${item.price}</strong>
+              <br />
+              <Link to={`/catalog/${item.id}`}>View details</Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
