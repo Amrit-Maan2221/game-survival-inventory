@@ -52,6 +52,7 @@ builder.Services.AddHttpClient<CatalogClient>((client) =>
 
 var app = builder.Build();
 app.UseForwardedHeaders();
+app.UseCors("AllowFrontend");
 
 bool enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
 if (enableSwagger)

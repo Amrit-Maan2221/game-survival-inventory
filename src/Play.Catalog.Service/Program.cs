@@ -53,7 +53,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 WebApplication app = builder.Build();
 app.UseForwardedHeaders();
-
+app.UseCors("AllowFrontend");
 bool enableSwagger = app.Environment.IsDevelopment() || builder.Configuration["ENABLE_SWAGGER"] == "true";
 if (enableSwagger)
 {
