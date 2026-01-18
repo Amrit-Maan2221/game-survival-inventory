@@ -21,11 +21,19 @@ public class InventoryItemsController(IRepository<InventoryItem> itemsRepository
         IReadOnlyCollection<InventoryItem> items = await itemsRepository.GetAllAsync(item => item.UserId == userId);
         var catalogItems = await catalogItemsRepository.GetAllAsync();
 
-        var itemsDtos = items.Select(async item =>
+        var itemsDtos = items.Select(item =>
         {
-            var catalogItem = catalogItems.First(catalogItem => catalogItem.Id == item.CatalogItemId);
+            var catalogItem = catalogItems
+                .FirstOrDefault(ci => ci.Id == item.CatalogItemId);
+
+            if (catalogItem == null)
+            {
+                return item.AsDto("Unknown Item", "Catalog item missing");
+            }
+
             return item.AsDto(catalogItem.Name, catalogItem.Description);
-        });
+        }).ToList();
+
 
         return Ok(itemsDtos);
     }
